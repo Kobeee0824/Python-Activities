@@ -1,0 +1,67 @@
+class VotingSystem:
+    def __init__(self):
+        self.candidates = {}
+        self.voters = set()
+
+    def add_candidate(self, name):
+        if name not in self.candidates:
+            self.candidates[name] = 0
+            print(f"Candidate '{name}' added successfully.")
+        else:
+            print("Candidate already exists.")
+
+    def vote(self, voter_id, candidate_name):
+        if voter_id in self.voters:
+            print("You have already voted!")
+            return
+
+        if candidate_name not in self.candidates:
+            print("Candidate does not exist.")
+            return
+
+        self.candidates[candidate_name] += 1
+        self.voters.add(voter_id)
+        print("Vote cast successfully!")
+
+    def show_results(self):
+        print("\n--- Voting Results ---")
+        for candidate, votes in self.candidates.items():
+            print(f"{candidate}: {votes} votes")
+
+        winner = max(self.candidates, key=self.candidates.get)
+        print(f"\nWinner: {winner}")
+
+
+def main():
+    voting_system = VotingSystem()
+
+    while True:
+        print("\n1. Add Candidate")
+        print("2. Vote")
+        print("3. Show Results")
+        print("4. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            name = input("Enter candidate name: ")
+            voting_system.add_candidate(name)
+
+        elif choice == "2":
+            voter_id = input("Enter your voter ID: ")
+            candidate = input("Enter candidate name: ")
+            voting_system.vote(voter_id, candidate)
+
+        elif choice == "3":
+            voting_system.show_results()
+
+        elif choice == "4":
+            print("Exiting voting system.")
+            break
+
+        else:
+            print("Invalid choice. Try again.")
+
+
+if __name__ == "__main__":
+    main()
