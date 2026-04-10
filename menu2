@@ -1,97 +1,89 @@
-class Menu:
-    def appetizer(self, item, quantity):
-        return f"Appetizer Order: {quantity} pcs of {item}"
-
-    def main_course(self, item, quantity):
-        return f"Main Course Order: {quantity} pcs of {item}"
-
-    def drinks(self, item, quantity):
-        return f"Drinks Order: {quantity} pcs of {item}"
-
-    def dessert(self, item, quantity):
-        return f"Dessert Order: {quantity} pcs of {item}"
+class Room:
+    def __init__(self, room_number, room_type, price):
+        self.room_number = room_number
+        self.room_type = room_type
+        self.price = price
+        self.is_booked = False
+        self.guest_name = None
 
 
-def get_quantity():
-    """Ask the user for quantity safely."""
-    while True:
-        try:
-            quantity = int(input("How many orders?: "))
-            if quantity > 0:
-                return quantity
-            else:
-                print("Enter a positive number!")
-        except ValueError:
-            print("Invalid input! Please enter a number.")
+class Hotel:
+    def __init__(self):
+        self.rooms = {}
+
+    def add_room(self, room_number, room_type, price):
+        if room_number in self.rooms:
+            print("Room already exists.")
+        else:
+            self.rooms[room_number] = Room(room_number, room_type, price)
+            print("Room added successfully.")
+
+    def check_in(self, room_number, guest_name):
+        room = self.rooms.get(room_number)
+        if not room:
+            print("Room does not exist.")
+        elif room.is_booked:
+            print("Room already booked.")
+        else:
+            room.is_booked = True
+            room.guest_name = guest_name
+            print(f"{guest_name} checked into room {room_number}.")
+
+    def check_out(self, room_number):
+        room = self.rooms.get(room_number)
+        if not room or not room.is_booked:
+            print("Room is not currently booked.")
+        else:
+            print(f"{room.guest_name} checked out.")
+            room.is_booked = False
+            room.guest_name = None
+
+    def view_rooms(self):
+        if not self.rooms:
+            print("No rooms available.")
+            return
+
+        for room in self.rooms.values():
+            status = "Booked" if room.is_booked else "Available"
+            print(f"Room {room.room_number} | {room.room_type} | ${room.price} | {status}")
 
 
 def main():
-    get_order = Menu()
-    order_again = ""
+    hotel = Hotel()
 
-    while order_again != "N":
-        print("\nWelcome to the Restaurant!")
-        print("1 - Appetizers\n2 - Main Courses\n3 - Drinks\n4 - Desserts")
-        print("==================================")
+    while True:
+        print("\n--- Hotel Management System ---")
+        print("1. Add Room")
+        print("2. Check In")
+        print("3. Check Out")
+        print("4. View Rooms")
+        print("5. Exit")
 
-        # Get valid menu choice
-        while True:
-            try:
-                choice = int(input("Enter your choice (1-4): "))
-                if choice in [1, 2, 3, 4]:
-                    break
-                else:
-                    print("Invalid choice! Enter 1-4.")
-            except ValueError:
-                print("Invalid input! Please enter a number.")
+        choice = input("Enter choice: ")
 
-        # Dictionary to map choices to menu items
-        menu_options = {
-            1: {"a": "Salad", "b": "Bread"},
-            2: {"a": "Steak", "b": "Fried Chicken"},
-            3: {"a": "Water", "b": "Coke"},
-            4: {"a": "Vanilla Ice Cream", "b": "Halo-Halo"}
-        }
+        if choice == "1":
+            num = input("Room number: ")
+            rtype = input("Room type: ")
+            price = float(input("Price per night: "))
+            hotel.add_room(num, rtype, price)
 
-        category_name = {1: "Appetizer", 2: "Main Course", 3: "Drink", 4: "Dessert"}
+        elif choice == "2":
+            num = input("Room number: ")
+            name = input("Guest name: ")
+            hotel.check_in(num, name)
 
-        # Display options for the chosen category
-        options = menu_options[choice]
-        print(f"Available {category_name[choice]}s:")
-        for key, item in options.items():
-            print(f"{key} - {item}")
+        elif choice == "3":
+            num = input("Room number: ")
+            hotel.check_out(num)
 
-        # Get valid item choice
-        while True:
-            item_choice = input(f"Enter your {category_name[choice]} choice: ").lower()
-            if item_choice in options:
-                item_name = options[item_choice]
-                break
-            else:
-                print("Invalid input! Please choose a valid option.")
+        elif choice == "4":
+            hotel.view_rooms()
 
-        # Get quantity safely
-        quantity = get_quantity()
-
-        # Call the correct Menu method
-        if choice == 1:
-            print(get_order.appetizer(item_name, quantity))
-        elif choice == 2:
-            print(get_order.main_course(item_name, quantity))
-        elif choice == 3:
-            print(get_order.drinks(item_name, quantity))
-        elif choice == 4:
-            print(get_order.dessert(item_name, quantity))
-
-        # Ask if user wants to order again
-        while True:
-            order_again = input("Do you want to order again? (Y/N): ").upper()
-            if order_again in "YN":
-                break
-            else:
-                print("Invalid input! Please enter Y or N.")
-
-    print("Thank you for ordering!")
+        elif choice == "5":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice.")
 
 
 if __name__ == "__main__":
